@@ -103,7 +103,14 @@ We ran two ablations: the choice of encoder (MuRIL, IndicBERT, mBERT) and class 
 
 \section{Results}
 Table~\ref{tab:baseline} gives the baseline. On the generated test split it scores very high because the text is templated, and it falls sharply on real BBMP phrases,
-so we treat the real-text figure as the more honest indicator.
+so we treat the real-text figure as the more honest indicator (Fig.~\ref{fig:real}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/real_vs_gen.png}
+\caption{Baseline accuracy on the generated test split versus real BBMP phrases.}
+\label{fig:real}
+\end{figure}
 
 \begin{table}[t]
 \caption{Baseline department classification (TF-IDF + logistic regression).}
@@ -124,6 +131,13 @@ BBMP, excl.\ ``other'', frequency-weighted & 0.91 & -- \\
 
 Keyword rules reach 0.473 accuracy on urgency and 0.233 on sentiment on the generated test split and never predict positive sentiment, so trained heads are required.
 Table~\ref{tab:models} compares the models on the generated test split. IndicBERT is best on department and sentiment; mBERT is best on urgency. The baseline has no trained urgency or sentiment head.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/models.png}
+\caption{Macro-F1 per task for each model on the generated test split.}
+\label{fig:models}
+\end{figure}
 
 \begin{table}[t]
 \caption{Macro-F1 on the generated test split ($n{=}150$). Baseline urgency and sentiment use keyword rules and are omitted.}
@@ -173,12 +187,20 @@ MuRIL & 0.746 & 0.713 & 0.536 \\
 Figure~\ref{fig:cm} shows the department confusion matrices. IndicBERT makes one error in 150 (a sanitation complaint predicted as water), and mBERT makes five (water and power complaints predicted as roads, and one sanitation as water). MuRIL's errors are systematic: 14 of 33 sanitation complaints are predicted as roads, 8 of 23 ``other'' complaints as roads, and 7 of 30 power complaints as roads, so it collapses toward the roads class.
 Its validation macro-F1 rose from 0.07 to 0.28, 0.55 and 0.69 over the four epochs and was still increasing, so these errors reflect an unfinished fit and not a limit of the encoder.
 Without class weights MuRIL stayed at 0.072 validation F1 for all four epochs, but because MuRIL itself is undertrained this does not isolate the effect of weighting.
+Figure~\ref{fig:curve} shows the MuRIL validation curve.
 We did not export misclassified complaint texts for the transformers, so we give no per-example analysis.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{figures/confusion_matrices.png}
-\caption{Department confusion matrices for the three transformers.}
+\includegraphics[width=\columnwidth]{figures/muril_curve.png}
+\caption{MuRIL validation department macro-F1 per epoch, with and without class weights.}
+\label{fig:curve}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/confusion_matrices_all.png}
+\caption{Department confusion matrices for the three transformers (rows actual, columns predicted).}
 \label{fig:cm}
 \end{figure}
 
