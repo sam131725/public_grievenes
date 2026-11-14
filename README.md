@@ -64,7 +64,7 @@ python scripts/train_transformer.py --config configs/indicbert.yaml
 python scripts/train_transformer.py --config configs/mbert.yaml
 python scripts/compare_models.py                                   # -> reports/results_table.md
 ```
-Transformer runs need a GPU — use Colab or Kaggle and pool the team's quotas. Each run writes `model.pt`, tokenizer, `metrics.json`, `per_language_report.csv` and `confusion_matrix.csv` to its `output_dir` (`reports/muril`, …). The best epoch (by validation department macro-F1) is kept. Hyper-parameters live in `configs/*.yaml`.
+Transformer runs need a GPU — use Colab or Kaggle and pool the team's quotas. The one-click way is `notebooks/02_train_colab.ipynb` (clone, train all three models, compare, download a results zip). Each run writes `model.pt`, tokenizer, `metrics.json`, `per_language_report.csv` and `confusion_matrix.csv` to its `output_dir` (`reports/muril`, …). The best epoch (by validation department macro-F1) is kept. Hyper-parameters live in `configs/*.yaml`.
 
 Serve a fine-tuned model by pointing the API/dashboard at its folder:
 ```bash
