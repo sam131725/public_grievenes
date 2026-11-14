@@ -85,6 +85,12 @@ stratified by department with seed 42. The final dataset has 1{,}000 rows (700 t
 \section{Method}
 \subsection{Baseline}
 TF-IDF features over word 1--2-grams with a class-weighted logistic regression predict the department; urgency and sentiment come from keyword rules.
+\subsection{Encoders compared}
+We compare three pre-trained encoders under identical settings.
+\textbf{MuRIL} (\texttt{google/muril-base-cased}) is trained on 17 Indian languages and includes transliterated text~\cite{khanuja2021muril}.
+\textbf{IndicBERT v2} (\texttt{ai4bharat/IndicBERTv2-MLM-only}) comes from the IndicCorp and IndicXTREME effort~\cite{kakwani2020indicnlp,doddapaneni2023towards}.
+\textbf{mBERT} (\texttt{bert-base-multilingual-cased}) is the general-purpose multilingual baseline~\cite{devlin2019bert}.
+All three are 12-layer base-size BERT encoders, so the comparison isolates the pre-training data and vocabulary rather than model size.
 \subsection{Multitask transformer}
 A pre-trained encoder (MuRIL, IndicBERT or mBERT) feeds the [CLS] representation through dropout to three linear heads (department, urgency, sentiment).
 The loss is the sum of three cross-entropy terms with inverse-frequency class weights (absent classes get weight zero), optimised with AdamW and a linear warm-up schedule;
@@ -183,6 +189,13 @@ MuRIL & 0.746 & 0.713 & 0.536 \\
 \label{fig:lang}
 \end{figure}
 
+\subsection{Why IndicBERT scored best}
+IndicBERT obtained the highest department macro-F1 (0.994) and the highest sentiment macro-F1 (1.000), with one department error in 150 test complaints.
+We did not run experiments that isolate the cause, so the following explanations are hypotheses and not findings.
+First, IndicBERT is pre-trained on text in Indian languages, which may suit Hindi and Marathi complaints better than mBERT, whose training data covers many languages with less Indian-language text.
+Second, IndicBERT trained stably within four epochs under a learning rate of $3{\times}10^{-5}$, reaching a validation macro-F1 of 1.00, while MuRIL's validation score was still rising at epoch four, so MuRIL's low score reflects an unfinished fit and not evidence that it is a weaker model.
+Third, the test split is templated, so several models can do well and small differences are not statistically reliable with one seed.
+mBERT was best on urgency (0.907), which shows no single encoder dominated every task.
 \subsection{Error analysis}
 Figure~\ref{fig:cm} shows the department confusion matrices. IndicBERT makes one error in 150 (a sanitation complaint predicted as water), and mBERT makes five (water and power complaints predicted as roads, and one sanitation as water). MuRIL's errors are systematic: 14 of 33 sanitation complaints are predicted as roads, 8 of 23 ``other'' complaints as roads, and 7 of 30 power complaints as roads, so it collapses toward the roads class.
 Its validation macro-F1 rose from 0.07 to 0.28, 0.55 and 0.69 over the four epochs and was still increasing, so these errors reflect an unfinished fit and not a limit of the encoder.
