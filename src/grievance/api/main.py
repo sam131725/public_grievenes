@@ -1,13 +1,13 @@
 from typing import List
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from ..models.predictor import Predictor
 
 app = FastAPI(title="Grievance Classifier & Router", version="0.1.0")
 predictor = Predictor()
 
 class Complaint(BaseModel):
-    text: str
+    text: str = Field(min_length=1)
 
 class Batch(BaseModel):
     complaints: List[str]

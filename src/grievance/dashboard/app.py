@@ -30,4 +30,7 @@ with tab3:
     try:
         st.dataframe(pd.read_csv("reports/per_language_report.csv"))
     except FileNotFoundError:
-        st.info("Run scripts/evaluate.py to generate reports/per_language_report.csv")
+        st.info(
+            "Run python scripts/evaluate.py to generate "
+            "reports/per_language_report.csv"
+        )
