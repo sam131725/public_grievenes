@@ -23,9 +23,21 @@ reports/            metrics, per-language report, figures
 ```
 
 ## Quickstart
+
+### 1. Install dependencies
+**With `uv` (recommended):**
+```bash
+uv sync
+```
+
+**otherwise with `pip`:**
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+### 2. Run the application:
+```bash
 python scripts/make_sample_data.py                 # builds data/samples/grievances_sample.csv
 python scripts/train_baseline.py                   # TF-IDF + LogReg baseline (Week 6)
 python scripts/train_transformer.py --config configs/muril.yaml   # fine-tune (use Colab/Kaggle GPU)
