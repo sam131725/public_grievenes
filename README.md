@@ -110,11 +110,11 @@ Empty text → `422`; no trained model available → `503`. Interactive docs at 
 
 ## Results
 
-_Fill in after training on the full dataset (`python scripts/compare_models.py` generates this table)._
+_Baseline row is from the generated test split (*) — see [docs/BASELINE_METRICS.md](docs/BASELINE_METRICS.md) for why this overstates real accuracy (41% on real BBMP phrases). † keyword rules, no trained head yet. Fill in the transformer rows after training (`python scripts/compare_models.py` builds the table)._
 
 | Model | Dept acc | Dept macro-F1 | Urgency macro-F1 | Sentiment macro-F1 |
 |-------|----------|---------------|------------------|--------------------|
-| TF-IDF + LogReg | | | | |
+| TF-IDF + LogReg | 0.967* | 0.969* | 0.471† | 0.156† |
 | MuRIL | | | | |
 | IndicBERT | | | | |
 | mBERT | | | | |
