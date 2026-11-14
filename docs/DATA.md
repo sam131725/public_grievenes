@@ -11,13 +11,20 @@ or `generated` (rule-assembled complaints, see below).
 |--------|------|-------|
 | Generated complaints (en/hi/mr) | training base | `scripts/generate_complaints.py` — see limitations below |
 | BBMP grievance export (Bengaluru) | real-world check + EDA | ~1.2M rows, ~190 distinct phrases, no free text |
-| IndicSentiment (AI4Bharat) | sentiment head, 13 languages | product reviews, positive/negative only, validation+test splits |
-| BanglaPSG (Mendeley, CC BY 4.0) | Bengali + severity labels | to download: https://data.mendeley.com/datasets/kcr8zfmtvb |
-| CivicNLP-608 (IEEE DataPort) | English/Marathi complaints | needs an IEEE DataPort subscription; DOI 10.21227/13nz-rt85 |
+| IndicSentiment (AI4Bharat, Hugging Face `ai4bharat/IndicSentiment`) | sentiment only, 13 languages | downloaded from Hugging Face and converted to `data/raw/indicsentiment/sentiment.csv` (15,002 rows, product reviews, validation+test splits); not yet merged into training |
+| BanglaPSG (Mendeley, CC BY 4.0) | Bengali + severity labels | not used: Bangla is outside our three languages (en/hi/mr) |
+| CivicNLP-608 (IEEE DataPort) | English/Marathi complaints | not used: needs an IEEE DataPort subscription; DOI 10.21227/13nz-rt85 |
 | CPGRAMS | background statistics only | data.gov.in has counts, no complaint text |
 
 Issues to handle: class imbalance (class weights), code-mixed / transliterated text, low-resource languages, label noise,
 weak labels for urgency/sentiment (`src/grievance/data/urgency_rules.py`).
+
+## Why part of the data is generated
+The project needs complaint text in several Indian languages labelled with a department. We searched for such a corpus and found none that is
+public, full-text and multilingual: BBMP has only category labels as text (about 190 distinct phrases), IndicSentiment has reviews with sentiment
+but no departments, CivicNLP-608 needs a paid IEEE DataPort subscription, and BanglaPSG is Bangla. To have enough labelled text to build and
+compare models, the team generated complaints from hand-written templates in English, Hindi and Marathi. This lets us test the full pipeline,
+but scores on generated text are inflated, so we also check on real BBMP phrases and plan a small real Hindi/Marathi test set.
 
 ## Generated complaints (English, Hindi, Marathi)
 `scripts/generate_complaints.py` writes `data/raw/generated_complaints.csv` (1,000 rows by default: 420 en, 300 hi, 280 mr)

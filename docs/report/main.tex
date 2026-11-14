@@ -59,6 +59,8 @@ complaint phrases, because the text field is a sub-category label; we use it for
 IndicSentiment~\cite{doddapaneni2023towards} provides 15{,}002 labelled reviews in 13 languages and is used only for sentiment.
 Because no source offers full-text multilingual complaints with department labels, we generated 1{,}000 English, Hindi and Marathi complaints
 from hand-written sentence templates (issue, location, duration, closing line), with urgency following issue severity.
+IndicSentiment was downloaded from Hugging Face (\texttt{ai4bharat/IndicSentiment}) and converted, but it is not yet part of the training data.
+We generated the complaints because we found no public, full-text, multilingual, department-labelled grievance corpus: BBMP carries only category labels, IndicSentiment has no departments, one candidate corpus requires a paid subscription, and BanglaPSG is Bangla. Generation lets us build and compare models end to end, at the cost of inflated scores on templated text.
 All generated rows are marked \texttt{label\_source=generated}. We did not use team-collected complaints in the experiments reported here, and BanglaPSG~\cite{banglapsg} is Bangla and so outside our three languages.
 
 \begin{table}[t]

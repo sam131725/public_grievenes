@@ -55,6 +55,10 @@ Shortcuts are in the [Makefile](Makefile) (`make baseline`, `make test`, `make a
    This writes `data/processed/grievances.csv` and `data/processed/data_card.json` (row counts, dropped rows, per-language/department counts, warnings).
 3. Processed schema: `text, language, department, urgency, sentiment, label_source` where `label_source` is `gold` (from the raw file) or `weak` (keyword rules — validate on a hand-labelled sample before reporting urgency/sentiment results).
 
+## Data in one paragraph
+
+Three sources are used. **Generated complaints** (1,000 rows in English, Hindi and Marathi, built from hand-written templates) are the training and test base, because no public full-text, multilingual, department-labelled grievance corpus exists. **BBMP** (Bengaluru, from GitHub) is a real-text check. **IndicSentiment** (AI4Bharat, from Hugging Face) is downloaded and converted for sentiment but not yet used in training. Details and limits: [docs/DATA.md](docs/DATA.md).
+
 ## Training
 
 ```bash
