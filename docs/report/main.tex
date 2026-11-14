@@ -1,6 +1,3 @@
-% IEEE conference-format report skeleton — CS474 Major Project P8.
-% Compile on Overleaf (IEEEtran is built in) or locally: pdflatex main && bibtex main && pdflatex main && pdflatex main
-% Search for \todo{...} to find everything still to be written. Delete this header comment before submission.
 \documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
 \usepackage{cite}
@@ -29,7 +26,7 @@ Public grievance portals receive complaints in many languages and rely on manual
 We present a system that classifies a citizen complaint into a department (water, roads, power, sanitation, other),
 scores its urgency and sentiment, and routes it to the responsible authority, served through a REST API and a dashboard
 with a per-language accuracy report. We compare a TF-IDF logistic-regression baseline with multilingual transformers
-fine-tuned with a shared encoder and three task heads. \todo{Summarise final results: best model, per-language macro-F1, key finding.}
+fine-tuned with a shared encoder and three task heads. On a held-out split of 150 generated English, Hindi and Marathi complaints, IndicBERT reaches 0.994 department macro-F1, against 0.969 for both the baseline and multilingual BERT; MuRIL reaches only 0.694 under our fixed four-epoch budget because it had not converged. All of these scores come from templated text and overstate real accuracy: the same baseline scores 0.41 on real BBMP complaint phrases.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -42,7 +39,7 @@ accept them in many languages. Reading, categorising and forwarding each complai
 This project builds a decision-support prototype that (i) predicts the responsible department, (ii) estimates urgency and sentiment, and
 (iii) routes the complaint, while leaving a human able to review the result. Our contributions are: a data pipeline and evaluation protocol
 that reports accuracy \emph{per language}; a comparison of a classical baseline with MuRIL, IndicBERT and multilingual BERT;
-and a deployed API and dashboard. \todo{State the headline numbers once final.}
+and a deployed API and dashboard. With a shared budget of four epochs, IndicBERT is the best encoder (department macro-F1 0.994, urgency 0.889, sentiment 1.000), mBERT matches the TF-IDF baseline on department (0.969), and MuRIL lags (0.694) because it was still improving when training stopped. We stress that these figures come from templated data.
 
 \section{Related Work}
 Multilingual encoders for Indian languages include MuRIL~\cite{khanuja2021muril}, trained on 17 Indian languages with transliterated text, and the
@@ -50,7 +47,10 @@ IndicBERT family with the IndicCorp corpora and the IndicXTREME benchmark~\cite{
 General-purpose baselines are multilingual BERT~\cite{devlin2019bert} and XLM-R~\cite{conneau2020xlmr}.
 For complaint text specifically, Singh et al.~\cite{singh2020complaints} identify complaints in Hindi product reviews and address class imbalance
 with SMOTE. To our knowledge there is no public, full-text, multilingual, department-labelled grievance corpus for Indian languages, which shapes our data strategy.
-\todo{Add 2--3 papers on civic-complaint classification and multi-task learning; discuss how this work differs.}
+Closest to our setting, Beskorovainyi~\cite{beskorovainyi2026appeals} classifies and routes 10{,}000 Russian-language citizen appeals and compares bag-of-words and TF-IDF with SVM, fastText, Word2Vec+LSTM and multilingual BERT on a three-way appeal-type task; BERT is most accurate, yet a smaller LSTM is deployed because of CPU-only hardware and retraining cost. That work is monolingual, predicts appeal type rather than department, urgency or sentiment, and reports a single score.
+Our task differs in covering three Indian languages, three prediction targets and a per-language report.
+For the shared-encoder design we follow hard parameter sharing, in which hidden layers are shared across tasks and only the output layers are task-specific~\cite{caruana1997multitask,ruder2017overview}.
+We did not test whether sharing helps here (Section~\ref{sec:abl}).
 
 \section{Data}
 \subsection{Sources}
@@ -59,7 +59,7 @@ complaint phrases, because the text field is a sub-category label; we use it for
 IndicSentiment~\cite{doddapaneni2023towards} provides 15{,}002 labelled reviews in 13 languages and is used only for sentiment.
 Because no source offers full-text multilingual complaints with department labels, we generated 1{,}000 English, Hindi and Marathi complaints
 from hand-written sentence templates (issue, location, duration, closing line), with urgency following issue severity.
-All generated rows are marked \texttt{label\_source=generated}. \todo{Add team-collected public complaints and BanglaPSG~\cite{banglapsg} once obtained; state counts.}
+All generated rows are marked \texttt{label\_source=generated}. We did not use team-collected complaints in the experiments reported here, and BanglaPSG~\cite{banglapsg} is Bangla and so outside our three languages.
 
 \begin{table}[t]
 \caption{Data sources and how they are used.}
@@ -73,7 +73,6 @@ Source & Size & Role and limitation \\
 Generated (en/hi/mr) & 1{,}000 & Training base; templated wording \\
 BBMP export & 187 phrases & Real-text check; no free text \\
 IndicSentiment & 15{,}002 & Sentiment only; reviews, no neutral \\
-\todo{BanglaPSG / team-collected} & \todo{n} & \todo{role} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -81,7 +80,7 @@ IndicSentiment & 15{,}002 & Sentiment only; reviews, no neutral \\
 \subsection{Cleaning, labels and splits}
 Texts are normalised (URLs and whitespace removed); empty, very short and duplicate texts are dropped; language is detected by script;
 missing urgency and sentiment labels are filled by keyword rules and flagged as weak. Data are split 70/15/15 into train, validation and test,
-stratified by department with seed 42. \todo{Report final dataset size, class and language distribution (EDA figures from notebooks/01\_eda.ipynb).}
+stratified by department with seed 42. The final dataset has 1{,}000 rows (700 train, 150 validation, 150 test) and no row was dropped. Language counts are 420 English, 300 Hindi and 280 Marathi. Department counts are 224 sanitation, 223 roads, 204 power, 199 water and 150 other. The test split has 51 English, 62 Hindi and 37 Marathi complaints.
 
 \section{Method}
 \subsection{Baseline}
@@ -89,7 +88,7 @@ TF-IDF features over word 1--2-grams with a class-weighted logistic regression p
 \subsection{Multitask transformer}
 A pre-trained encoder (MuRIL, IndicBERT or mBERT) feeds the [CLS] representation through dropout to three linear heads (department, urgency, sentiment).
 The loss is the sum of three cross-entropy terms with inverse-frequency class weights (absent classes get weight zero), optimised with AdamW and a linear warm-up schedule;
-the epoch with the best validation department macro-F1 is kept. \todo{Add final hyper-parameters (learning rate, batch size, epochs, max length) from configs/.}
+the epoch with the best validation department macro-F1 is kept. All three encoders use the same settings: learning rate $3{\times}10^{-5}$, batch size 16, 4 epochs, maximum length 128 tokens and seed 42, with class weighting on.
 \subsection{System}
 A FastAPI service exposes single and batch prediction, and a Streamlit dashboard supports pasting or uploading complaints and shows the per-language report.
 Predictions include the routing target for the predicted department.
@@ -97,9 +96,10 @@ Predictions include the routing target for the predicted department.
 \section{Experiments}
 \subsection{Setup}
 We report accuracy and macro-F1 per task and per language, the department confusion matrix, and error analysis. Because generated text is templated,
-we also evaluate on real text kept out of training. \todo{Compute: GPU type, training time, number of seeds.}
+we also evaluate on real text kept out of training. All models were fine-tuned on a single free Google Colab GPU (T4) with one seed (42), so we report no variance across seeds and small differences should not be over-read.
 \subsection{Ablations}
-\todo{Encoder choice; single-task vs multitask; class weighting on/off; generated-only vs generated+real; with/without IndicSentiment.}
+\label{sec:abl}
+We ran two ablations: the choice of encoder (MuRIL, IndicBERT, mBERT) and class weighting on versus off for MuRIL. We did not run single-task versus multitask, generated-only versus generated plus real data, or training with IndicSentiment; these remain future work.
 
 \section{Results}
 Table~\ref{tab:baseline} gives the baseline. On the generated test split it scores very high because the text is templated, and it falls sharply on real BBMP phrases,
@@ -123,19 +123,76 @@ BBMP, excl.\ ``other'', frequency-weighted & 0.91 & -- \\
 \end{table}
 
 Keyword rules reach 0.473 accuracy on urgency and 0.233 on sentiment on the generated test split and never predict positive sentiment, so trained heads are required.
-\todo{Table: MuRIL vs IndicBERT vs mBERT vs baseline, per task. Table: per-language macro-F1. Figure: confusion matrix. Error analysis with examples.}
+Table~\ref{tab:models} compares the models on the generated test split. IndicBERT is best on department and sentiment; mBERT is best on urgency. The baseline has no trained urgency or sentiment head.
+
+\begin{table}[t]
+\caption{Macro-F1 on the generated test split ($n{=}150$). Baseline urgency and sentiment use keyword rules and are omitted.}
+\label{tab:models}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Model & Dept. & Urgency & Sentiment \\
+\midrule
+TF-IDF + LogReg & 0.969 & -- & -- \\
+IndicBERT & \textbf{0.994} & 0.889 & \textbf{1.000} \\
+mBERT & 0.969 & \textbf{0.907} & 0.984 \\
+MuRIL & 0.694 & 0.656 & 0.787 \\
+MuRIL, no class weights & 0.074 & 0.153 & 0.310 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:lang} gives department macro-F1 per language (Fig.~\ref{fig:lang}). Hindi is the weakest language for the baseline (0.929) and IndicBERT (0.985), and Marathi for mBERT (0.931). MuRIL is weakest on Marathi (0.536).
+
+\begin{table}[t]
+\caption{Department macro-F1 per language on the test split.}
+\label{tab:lang}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Model & en ($n{=}51$) & hi ($n{=}62$) & mr ($n{=}37$) \\
+\midrule
+TF-IDF + LogReg & 1.000 & 0.929 & 1.000 \\
+IndicBERT & 1.000 & 0.985 & 1.000 \\
+mBERT & 1.000 & 0.969 & 0.931 \\
+MuRIL & 0.746 & 0.713 & 0.536 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/per_language_f1.png}
+\caption{Department macro-F1 per language.}
+\label{fig:lang}
+\end{figure}
+
+\subsection{Error analysis}
+Figure~\ref{fig:cm} shows the department confusion matrices. IndicBERT makes one error in 150 (a sanitation complaint predicted as water), and mBERT makes five (water and power complaints predicted as roads, and one sanitation as water). MuRIL's errors are systematic: 14 of 33 sanitation complaints are predicted as roads, 8 of 23 ``other'' complaints as roads, and 7 of 30 power complaints as roads, so it collapses toward the roads class.
+Its validation macro-F1 rose from 0.07 to 0.28, 0.55 and 0.69 over the four epochs and was still increasing, so these errors reflect an unfinished fit and not a limit of the encoder.
+Without class weights MuRIL stayed at 0.072 validation F1 for all four epochs, but because MuRIL itself is undertrained this does not isolate the effect of weighting.
+We did not export misclassified complaint texts for the transformers, so we give no per-example analysis.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/confusion_matrices.png}
+\caption{Department confusion matrices for the three transformers.}
+\label{fig:cm}
+\end{figure}
 
 \section{Discussion and Limitations}
 Generated complaints are templated, so high scores on a generated split overstate real-world accuracy. The BBMP check is small and its category-to-department mapping is noisy.
 Language coverage is uneven, and Hindi and Marathi sentences were written without full native-speaker review.
 Complaints may contain personal details; we use only public, anonymized data and strip identifiers. The system is a decision-support prototype: a person should be able to review
-and override routing, especially for critical urgency. \todo{Add findings from the transformer experiments and failure cases.}
+and override routing, especially for critical urgency. In the transformer experiments, the gap between IndicBERT and mBERT (0.994 vs 0.969) is five errors versus one in 150 examples from a single seed, which is too small to rank them confidently. MuRIL, the encoder designed for Indian languages, scored lowest, but only because it had not converged in four epochs; a fair comparison needs longer training or a higher learning rate. The very high scores of the other models show that the templated task is easy, not that routing is solved.
 
 \section{Conclusion}
-\todo{Summarise what worked, the per-language picture, and future work (more real data, more languages, human-in-the-loop review).}
+We built a pipeline, a multitask model, an API and a dashboard for classifying and routing multilingual grievances, and a per-language evaluation. On generated data IndicBERT scored best (department macro-F1 0.994), mBERT matched the TF-IDF baseline (0.969), and MuRIL was undertrained (0.694). The more important result is the gap between templated and real text: the baseline falls to 0.41 on real BBMP phrases. Future work is to collect and label real Hindi and Marathi complaints for an honest test set, train MuRIL to convergence, run the multitask and class-weighting ablations on every encoder with several seeds, replace keyword-rule urgency and sentiment labels with human labels, and keep a person in the loop for critical cases.
 
 \section*{Acknowledgment}
-\todo{Thank the instructor and teaching staff; mention free compute (Google Colab / Kaggle).}
+We thank Dr.\ Mehul Kumar and the teaching staff of CS474 for guidance, and Google Colab for free GPU compute.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
