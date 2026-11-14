@@ -2,10 +2,11 @@ import re
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-_URL = re.compile(r"https?://\S+")
+_URL = re.compile(r"\b(?:https?://|www\.)\S+", re.IGNORECASE)
 _WS = re.compile(r"\s+")
 
 def clean_text(t: str) -> str:
+    """Remove web links and normalize whitespace in a complaint."""
     t = _URL.sub(" ", str(t))
     return _WS.sub(" ", t).strip()
 
