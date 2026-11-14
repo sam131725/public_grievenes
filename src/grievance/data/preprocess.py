@@ -12,8 +12,14 @@ def clean_text(t: str) -> str:
 
 def load_and_split(path, seed=42, stratify_col="department"):
     """CSV columns: text, language, department, urgency, sentiment."""
-    df = pd.read_csv(path).dropna(subset=["text", "department"])
+    df = pd.read_csv(path)
+    if stratify_col not in df.columns:
+        raise ValueError(f"Missing stratification column: {stratify_col}")
+    df = df.dropna(subset=["text", stratify_col])
     df["text"] = df["text"].map(clean_text)
+    df = df.loc[df["text"].ne("")].copy()
+    if df.empty:
+        raise ValueError("No complaints with nonempty text and labels remain after cleaning.")
     train, tmp = train_test_split(df, test_size=0.3, random_state=seed, stratify=df[stratify_col])
     val, test = train_test_split(tmp, test_size=0.5, random_state=seed, stratify=tmp[stratify_col])
     return train, val, test
