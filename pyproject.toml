@@ -3,6 +3,22 @@ name = "grievance"
 version = "0.1.0"
 description = "Multilingual public grievance classifier and router"
 requires-python = ">=3.10"
+dependencies = [
+    "datasets>=2.19",
+    "fastapi>=0.110",
+    "langdetect>=1.0.9",
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "pytest>=8.0",
+    "pyyaml>=6.0",
+    "requests>=2.31",
+    "scikit-learn>=1.4",
+    "streamlit>=1.33",
+    "torch>=2.2",
+    "transformers>=4.40",
+    "uvicorn>=0.29",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
