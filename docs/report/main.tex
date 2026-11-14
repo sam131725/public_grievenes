@@ -13,11 +13,10 @@
 
 \title{Multilingual Public Grievance Classifier and Router}
 
-\author{\IEEEauthorblockN{Sudhanshu Katiyar \and Raj Kesharwani \and Nishchay Gupta \and Ratnesh Singh \and Anant Rawat \and Pratik Roy}
+\author{\IEEEauthorblockN{Raj Kesharwani \and Nishchay Gupta \and Ratnesh Singh \and Anant Rawat \and Pratik Roy}
 \IEEEauthorblockN{Rahul Kumar \and Saumya Rai \and Md.\ Zaki \and Shashank Shekhar \and Ravindra Kumar}
 \IEEEauthorblockA{CS474 Deep Learning, Indian Institute of Information Technology Bhagalpur\\
-Instructor: Dr.\ Mehul Kumar\\
-Roll numbers 230101026--230101156}}
+Instructor: Dr.\ Mehul Kumar}}
 
 \maketitle
 
@@ -372,7 +371,7 @@ We therefore regard the numbers as a demonstration that the pipeline works and a
 The repository fixes the seed to 42, stores each model's settings in a YAML file, and provides scripts that regenerate the data, train the baseline and each encoder, and build the results table.
 A notebook runs the whole experiment on a free GPU and produces a downloadable results archive, and the data card records how many rows were read, dropped and kept, per language and department.
 \subsection{Team contributions}
-The 11-member team was organised into data (two members), modelling (three), evaluation (two), deployment (two) and coordination (two), following the split recommended in the course brief, with each member expected to commit weekly to a shared repository.
+The 10-member team was organised into data (two members), modelling (three), evaluation (two), deployment (two) and coordination (one), following the split recommended in the course brief, with each member expected to commit weekly to a shared repository.
 
 \section{Conclusion}
 We built a pipeline, a multitask model, an API and a dashboard for classifying and routing multilingual grievances, and a per-language evaluation. On generated data IndicBERT scored best (department macro-F1 0.994), mBERT matched the TF-IDF baseline (0.969), and MuRIL was undertrained (0.694). The more important result is the gap between templated and real text: the baseline falls to 0.41 on real BBMP phrases. Future work is to collect and label real Hindi and Marathi complaints for an honest test set, train MuRIL to convergence, run the multitask and class-weighting ablations on every encoder with several seeds, replace keyword-rule urgency and sentiment labels with human labels, and keep a person in the loop for critical cases.
