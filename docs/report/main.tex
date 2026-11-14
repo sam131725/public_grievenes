@@ -1,0 +1,142 @@
+% IEEE conference-format report skeleton — CS474 Major Project P8.
+% Compile on Overleaf (IEEEtran is built in) or locally: pdflatex main && bibtex main && pdflatex main && pdflatex main
+% Search for \todo{...} to find everything still to be written. Delete this header comment before submission.
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\newcommand{\todo}[1]{\textbf{\textcolor{red}{[TODO: #1]}}}
+
+\begin{document}
+
+\title{Multilingual Public Grievance Classifier and Router}
+
+\author{\IEEEauthorblockN{\todo{Team member names}}
+\IEEEauthorblockA{CS474 Deep Learning, Indian Institute of Information Technology Bhagalpur\\
+Instructor: Dr.\ Mehul Kumar\\
+\todo{emails}}}
+
+\maketitle
+
+\begin{abstract}
+Public grievance portals receive complaints in many languages and rely on manual reading and forwarding.
+We present a system that classifies a citizen complaint into a department (water, roads, power, sanitation, other),
+scores its urgency and sentiment, and routes it to the responsible authority, served through a REST API and a dashboard
+with a per-language accuracy report. We compare a TF-IDF logistic-regression baseline with multilingual transformers
+fine-tuned with a shared encoder and three task heads. \todo{Summarise final results: best model, per-language macro-F1, key finding.}
+\end{abstract}
+
+\begin{IEEEkeywords}
+grievance redressal, text classification, multilingual NLP, Indian languages, class imbalance, MuRIL
+\end{IEEEkeywords}
+
+\section{Introduction}
+Citizens lodge hundreds of thousands of civic complaints about water supply, roads, electricity and waste, and platforms such as CPGRAMS
+accept them in many languages. Reading, categorising and forwarding each complaint is slow and error-prone, and mistakes delay urgent cases.
+This project builds a decision-support prototype that (i) predicts the responsible department, (ii) estimates urgency and sentiment, and
+(iii) routes the complaint, while leaving a human able to review the result. Our contributions are: a data pipeline and evaluation protocol
+that reports accuracy \emph{per language}; a comparison of a classical baseline with MuRIL, IndicBERT and multilingual BERT;
+and a deployed API and dashboard. \todo{State the headline numbers once final.}
+
+\section{Related Work}
+Multilingual encoders for Indian languages include MuRIL~\cite{khanuja2021muril}, trained on 17 Indian languages with transliterated text, and the
+IndicBERT family with the IndicCorp corpora and the IndicXTREME benchmark~\cite{kakwani2020indicnlp,doddapaneni2023towards}.
+General-purpose baselines are multilingual BERT~\cite{devlin2019bert} and XLM-R~\cite{conneau2020xlmr}.
+For complaint text specifically, Singh et al.~\cite{singh2020complaints} identify complaints in Hindi product reviews and address class imbalance
+with SMOTE. To our knowledge there is no public, full-text, multilingual, department-labelled grievance corpus for Indian languages, which shapes our data strategy.
+\todo{Add 2--3 papers on civic-complaint classification and multi-task learning; discuss how this work differs.}
+
+\section{Data}
+\subsection{Sources}
+We use several sources, each with limits (Table~\ref{tab:data}). The BBMP (Bengaluru) grievance export~\cite{bbmp} has 1.23M rows but only 187 distinct
+complaint phrases, because the text field is a sub-category label; we use it for exploratory analysis and as a real-text check.
+IndicSentiment~\cite{doddapaneni2023towards} provides 15{,}002 labelled reviews in 13 languages and is used only for sentiment.
+Because no source offers full-text multilingual complaints with department labels, we generated 1{,}000 English, Hindi and Marathi complaints
+from hand-written sentence templates (issue, location, duration, closing line), with urgency following issue severity.
+All generated rows are marked \texttt{label\_source=generated}. \todo{Add team-collected public complaints and BanglaPSG~\cite{banglapsg} once obtained; state counts.}
+
+\begin{table}[t]
+\caption{Data sources and how they are used.}
+\label{tab:data}
+\centering
+\small
+\begin{tabular}{@{}p{2.1cm}p{1.1cm}p{4.2cm}@{}}
+\toprule
+Source & Size & Role and limitation \\
+\midrule
+Generated (en/hi/mr) & 1{,}000 & Training base; templated wording \\
+BBMP export & 187 phrases & Real-text check; no free text \\
+IndicSentiment & 15{,}002 & Sentiment only; reviews, no neutral \\
+\todo{BanglaPSG / team-collected} & \todo{n} & \todo{role} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cleaning, labels and splits}
+Texts are normalised (URLs and whitespace removed); empty, very short and duplicate texts are dropped; language is detected by script;
+missing urgency and sentiment labels are filled by keyword rules and flagged as weak. Data are split 70/15/15 into train, validation and test,
+stratified by department with seed 42. \todo{Report final dataset size, class and language distribution (EDA figures from notebooks/01\_eda.ipynb).}
+
+\section{Method}
+\subsection{Baseline}
+TF-IDF features over word 1--2-grams with a class-weighted logistic regression predict the department; urgency and sentiment come from keyword rules.
+\subsection{Multitask transformer}
+A pre-trained encoder (MuRIL, IndicBERT or mBERT) feeds the [CLS] representation through dropout to three linear heads (department, urgency, sentiment).
+The loss is the sum of three cross-entropy terms with inverse-frequency class weights (absent classes get weight zero), optimised with AdamW and a linear warm-up schedule;
+the epoch with the best validation department macro-F1 is kept. \todo{Add final hyper-parameters (learning rate, batch size, epochs, max length) from configs/.}
+\subsection{System}
+A FastAPI service exposes single and batch prediction, and a Streamlit dashboard supports pasting or uploading complaints and shows the per-language report.
+Predictions include the routing target for the predicted department.
+
+\section{Experiments}
+\subsection{Setup}
+We report accuracy and macro-F1 per task and per language, the department confusion matrix, and error analysis. Because generated text is templated,
+we also evaluate on real text kept out of training. \todo{Compute: GPU type, training time, number of seeds.}
+\subsection{Ablations}
+\todo{Encoder choice; single-task vs multitask; class weighting on/off; generated-only vs generated+real; with/without IndicSentiment.}
+
+\section{Results}
+Table~\ref{tab:baseline} gives the baseline. On the generated test split it scores very high because the text is templated, and it falls sharply on real BBMP phrases,
+so we treat the real-text figure as the more honest indicator.
+
+\begin{table}[t]
+\caption{Baseline department classification (TF-IDF + logistic regression).}
+\label{tab:baseline}
+\centering
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Evaluation set & Accuracy & Macro-F1 \\
+\midrule
+Generated test split ($n{=}150$) & 0.967 & 0.969 \\
+BBMP phrases, all ($n{=}186$) & 0.41 & -- \\
+BBMP phrases, excl.\ ``other'' ($n{=}38$) & 0.55 & -- \\
+BBMP, excl.\ ``other'', frequency-weighted & 0.91 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Keyword rules reach 0.473 accuracy on urgency and 0.233 on sentiment on the generated test split and never predict positive sentiment, so trained heads are required.
+\todo{Table: MuRIL vs IndicBERT vs mBERT vs baseline, per task. Table: per-language macro-F1. Figure: confusion matrix. Error analysis with examples.}
+
+\section{Discussion and Limitations}
+Generated complaints are templated, so high scores on a generated split overstate real-world accuracy. The BBMP check is small and its category-to-department mapping is noisy.
+Language coverage is uneven, and Hindi and Marathi sentences were written without full native-speaker review.
+Complaints may contain personal details; we use only public, anonymized data and strip identifiers. The system is a decision-support prototype: a person should be able to review
+and override routing, especially for critical urgency. \todo{Add findings from the transformer experiments and failure cases.}
+
+\section{Conclusion}
+\todo{Summarise what worked, the per-language picture, and future work (more real data, more languages, human-in-the-loop review).}
+
+\section*{Acknowledgment}
+\todo{Thank the instructor and teaching staff; mention free compute (Google Colab / Kaggle).}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
