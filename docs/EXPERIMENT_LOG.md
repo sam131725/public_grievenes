@@ -8,3 +8,5 @@
 | 2026-11-14 | team | mBERT | configs/mbert.yaml, same settings | 0.969 (acc 0.967) | 0.907 | 0.984 | en 1.00, hi 0.969, mr 0.931 (Marathi weakest). Ties the TF-IDF baseline on department (baseline: hi 0.929) |
 | 2026-11-14 | team | MuRIL | configs/muril.yaml, same settings | 0.694 (acc 0.687) | 0.656 | 0.787 | Undertrained: val dept F1 0.07, 0.28, 0.55, 0.69 over 4 epochs and still rising. Marathi 0.54, Hindi 0.71, English 0.75. Rerun with more epochs / higher lr |
 | 2026-11-14 | team | MuRIL, class_weighting=false (ablation) | same as MuRIL, only class_weighting changed | 0.074 (acc 0.227) | 0.153 | 0.309 | Never left the initial state in 4 epochs (val F1 flat at 0.072). Not a clean weighting ablation because MuRIL itself is undertrained; repeat on IndicBERT |
+| 2026-11-14 | team | PLANNED: MuRIL rerun | configs/muril.yaml now 10 epochs, lr 5e-5 | | | | Replace the undertrained 4-epoch row once run |
+| 2026-11-14 | team | PLANNED: IndicBERT, class_weighting=false | notebook section 6, only class_weighting changed | | | | Clean weighting ablation |
