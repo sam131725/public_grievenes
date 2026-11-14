@@ -45,6 +45,7 @@ Shortcuts are in the [Makefile](Makefile) (`make baseline`, `make test`, `make a
 
 ## Using your real data
 
+0. No real data yet? `python scripts/generate_complaints.py` writes a labelled English/Hindi/Marathi set to `data/raw/` (rows are tagged `label_source=generated` — see Limitations).
 1. Drop raw CSVs into `data/raw/`. A `text` column is required (`complaint`, `description`, `grievance` are auto-detected; or pass `--text-col`). Optional columns: `language`, `department`, `urgency`, `sentiment`.
 2. Build the processed dataset:
    ```bash
@@ -149,6 +150,7 @@ Covers the data pipeline, evaluation reports, model helpers/predictors and API v
 - **Weak labels.** Where urgency/sentiment come from keyword rules, scores on those tasks reflect the rules, not human judgement.
 - **Language coverage is uneven.** Low-resource languages and code-mixed or transliterated text will score lower — check the per-language report before trusting a language.
 - **Demo data is synthetic and repeated**, so its metrics only prove the pipeline runs.
+- **Generated complaints are templated** (`label_source=generated`; see [docs/DATA.md](docs/DATA.md)). High scores on a split from the same data overstate real-world accuracy — check results on real text such as the BBMP phrases, and have native speakers review the Hindi/Marathi rows.
 
 ## Team workflow
 
