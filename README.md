@@ -114,14 +114,14 @@ Empty text → `422`; no trained model available → `503`. Interactive docs at 
 
 ## Results
 
-_Baseline row is from the generated test split (*) — see [docs/BASELINE_METRICS.md](docs/BASELINE_METRICS.md) for why this overstates real accuracy (41% on real BBMP phrases). † keyword rules, no trained head yet. Fill in the transformer rows after training (`python scripts/compare_models.py` builds the table)._
+_Baseline row is from the generated test split (*) — see [docs/BASELINE_METRICS.md](docs/BASELINE_METRICS.md) for why this overstates real accuracy (41% on real BBMP phrases). † keyword rules, no trained head yet. Transformer rows come from one T4 run (4 epochs, seed 42; `python scripts/compare_models.py` builds the table). MuRIL was still improving at epoch 4 (val F1 0.07→0.28→0.55→0.69), so it needs more epochs or a higher learning rate before it can be compared fairly. Per-language scores: `reports/<model>/per_language_report.csv`._
 
 | Model | Dept acc | Dept macro-F1 | Urgency macro-F1 | Sentiment macro-F1 |
 |-------|----------|---------------|------------------|--------------------|
 | TF-IDF + LogReg | 0.967* | 0.969* | 0.471† | 0.156† |
-| MuRIL | | | | |
-| IndicBERT | | | | |
-| mBERT | | | | |
+| MuRIL | 0.687* | 0.694* | 0.656* | 0.787* |
+| IndicBERT | 0.993* | 0.994* | 0.889* | 1.000* |
+| mBERT | 0.967* | 0.969* | 0.907* | 0.984* |
 
 ## Repository layout
 

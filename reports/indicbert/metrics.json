@@ -1,0 +1,50 @@
+{
+  "model": "ai4bharat/IndicBERTv2-MLM-only",
+  "split_sizes": [
+    700,
+    150,
+    150
+  ],
+  "class_weighting": true,
+  "best_val_department_f1": 1.0,
+  "test": {
+    "department": {
+      "accuracy": 0.9933,
+      "macro_f1": 0.9936
+    },
+    "urgency": {
+      "accuracy": 0.88,
+      "macro_f1": 0.8891
+    },
+    "sentiment": {
+      "accuracy": 1.0,
+      "macro_f1": 1.0
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "val_department_f1": 0.5492,
+      "val_urgency_f1": 0.5772,
+      "val_sentiment_f1": 0.9731
+    },
+    {
+      "epoch": 2,
+      "val_department_f1": 0.9445,
+      "val_urgency_f1": 0.711,
+      "val_sentiment_f1": 1.0
+    },
+    {
+      "epoch": 3,
+      "val_department_f1": 1.0,
+      "val_urgency_f1": 0.784,
+      "val_sentiment_f1": 1.0
+    },
+    {
+      "epoch": 4,
+      "val_department_f1": 1.0,
+      "val_urgency_f1": 0.8346,
+      "val_sentiment_f1": 1.0
+    }
+  ]
+}

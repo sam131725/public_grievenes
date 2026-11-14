@@ -1,0 +1,50 @@
+{
+  "model": "bert-base-multilingual-cased",
+  "split_sizes": [
+    700,
+    150,
+    150
+  ],
+  "class_weighting": true,
+  "best_val_department_f1": 0.9786,
+  "test": {
+    "department": {
+      "accuracy": 0.9667,
+      "macro_f1": 0.9687
+    },
+    "urgency": {
+      "accuracy": 0.9133,
+      "macro_f1": 0.9068
+    },
+    "sentiment": {
+      "accuracy": 0.9933,
+      "macro_f1": 0.9842
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "val_department_f1": 0.1928,
+      "val_urgency_f1": 0.5489,
+      "val_sentiment_f1": 0.8002
+    },
+    {
+      "epoch": 2,
+      "val_department_f1": 0.7196,
+      "val_urgency_f1": 0.6857,
+      "val_sentiment_f1": 0.9765
+    },
+    {
+      "epoch": 3,
+      "val_department_f1": 0.9645,
+      "val_urgency_f1": 0.8374,
+      "val_sentiment_f1": 1.0
+    },
+    {
+      "epoch": 4,
+      "val_department_f1": 0.9786,
+      "val_urgency_f1": 0.8296,
+      "val_sentiment_f1": 1.0
+    }
+  ]
+}

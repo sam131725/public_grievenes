@@ -1,0 +1,50 @@
+{
+  "model": "google/muril-base-cased",
+  "split_sizes": [
+    700,
+    150,
+    150
+  ],
+  "class_weighting": true,
+  "best_val_department_f1": 0.6901,
+  "test": {
+    "department": {
+      "accuracy": 0.6867,
+      "macro_f1": 0.694
+    },
+    "urgency": {
+      "accuracy": 0.7333,
+      "macro_f1": 0.6564
+    },
+    "sentiment": {
+      "accuracy": 0.8933,
+      "macro_f1": 0.7866
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "val_department_f1": 0.0721,
+      "val_urgency_f1": 0.1528,
+      "val_sentiment_f1": 0.8037
+    },
+    {
+      "epoch": 2,
+      "val_department_f1": 0.2835,
+      "val_urgency_f1": 0.5533,
+      "val_sentiment_f1": 0.9562
+    },
+    {
+      "epoch": 3,
+      "val_department_f1": 0.5466,
+      "val_urgency_f1": 0.6606,
+      "val_sentiment_f1": 0.8119
+    },
+    {
+      "epoch": 4,
+      "val_department_f1": 0.6901,
+      "val_urgency_f1": 0.6871,
+      "val_sentiment_f1": 0.788
+    }
+  ]
+}

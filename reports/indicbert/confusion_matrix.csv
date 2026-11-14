@@ -1,0 +1,6 @@
+actual_department,water,roads,power,sanitation,other
+water,30,0,0,0,0
+roads,0,34,0,0,0
+power,0,0,30,0,0
+sanitation,1,0,0,32,0
+other,0,0,0,0,23

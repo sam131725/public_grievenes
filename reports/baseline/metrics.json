@@ -1,0 +1,14 @@
+{
+  "model": "tfidf-logreg-baseline",
+  "split_sizes": [
+    700,
+    150,
+    150
+  ],
+  "test": {
+    "department": {
+      "accuracy": 0.9667,
+      "macro_f1": 0.9686
+    }
+  }
+}
