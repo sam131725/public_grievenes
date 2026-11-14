@@ -78,6 +78,10 @@ Without that variable the TF-IDF baseline is served.
 python scripts/evaluate.py                                   # uses processed data if present, else the demo CSV; seed 42
 python scripts/evaluate.py --test-data data/processed/test.csv --model reports/baseline/model.pkl --output-dir reports/evaluation
 ```
+For full-data splits, preprocessing removes `http(s)://` and `www.` links, normalizes whitespace,
+and drops rows with missing or blank text or department. It reports a clear error if the
+stratification column is missing or no usable rows remain.
+
 Outputs (existing files with the same names are replaced):
 - `per_language_report.csv` — sample count, accuracy and macro-F1 per language
 - `confusion_matrix.csv` — actual departments as rows, predicted as columns (all five always present)
