@@ -5,8 +5,8 @@ __pycache__/
 data/raw/*
 data/processed/*
 !data/**/.gitkeep
-models/
-checkpoints/
+/models/
+/checkpoints/
 *.pt
 *.bin
 *.safetensors
