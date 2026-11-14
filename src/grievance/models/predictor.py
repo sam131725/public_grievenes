@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import pickle
 from typing import Any
@@ -37,3 +38,24 @@ class Predictor:
             "sentiment": weak_sentiment(text),
             "route": ROUTING[department],
         }
+
+    def predict_batch(self, texts: list[str]) -> list[dict[str, str]]:
+        return [self.predict(t) for t in texts]
+
+    def info(self) -> dict[str, Any]:
+        return {"backend": "tfidf-logreg-baseline", "loaded": self.model is not None}
+
+
+def load_predictor():
+    """Return the best available predictor.
+
+    If GRIEVANCE_MODEL_DIR points to a directory written by
+    scripts/train_transformer.py, use the fine-tuned multitask transformer;
+    otherwise fall back to the TF-IDF baseline.
+    """
+    model_dir = os.environ.get("GRIEVANCE_MODEL_DIR")
+    if model_dir:
+        from grievance.models.transformer_predictor import TransformerPredictor
+
+        return TransformerPredictor(model_dir)
+    return Predictor()

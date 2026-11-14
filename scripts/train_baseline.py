@@ -1,6 +1,6 @@
-import os, pickle, sys, pandas as pd
+import json, os, pickle, sys, pandas as pd
 sys.path.insert(0, "src")
-from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score, classification_report, f1_score
 from grievance.data.preprocess import load_and_split
 from grievance.models.baseline import build_baseline
 from grievance.models.evaluate import per_language_report
@@ -15,3 +15,9 @@ print(classification_report(test["department"], test["pred"], zero_division=0))
 os.makedirs("reports/baseline", exist_ok=True)
 pickle.dump(m, open("reports/baseline/model.pkl", "wb"))
 per_language_report(test, "department", "pred").to_csv("reports/per_language_report.csv", index=False)
+json.dump({
+    "model": "tfidf-logreg-baseline", "split_sizes": [len(train), len(val), len(test)],
+    "test": {"department": {
+        "accuracy": round(accuracy_score(test["department"], test["pred"]), 4),
+        "macro_f1": round(f1_score(test["department"], test["pred"], average="macro", zero_division=0), 4)}},
+}, open("reports/baseline/metrics.json", "w"), indent=2)

@@ -1,14 +1,19 @@
 import torch
 from torch import nn
-from transformers import AutoModel
+from transformers import AutoConfig, AutoModel
 
 
 class MultiTaskClassifier(nn.Module):
     """Transformer encoder with one classification head per task."""
 
-    def __init__(self, model_name: str) -> None:
+    def __init__(self, model_name: str, load_pretrained: bool = True) -> None:
+        """`load_pretrained=False` builds the encoder from its config only, so a
+        fine-tuned checkpoint can be restored without downloading base weights."""
         super().__init__()
-        self.encoder = AutoModel.from_pretrained(model_name)
+        if load_pretrained:
+            self.encoder = AutoModel.from_pretrained(model_name)
+        else:
+            self.encoder = AutoModel.from_config(AutoConfig.from_pretrained(model_name))
         hidden_size = self.encoder.config.hidden_size
         self.dropout = nn.Dropout(0.1)
         self.heads = nn.ModuleDict(
