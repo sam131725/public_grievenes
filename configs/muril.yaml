@@ -1,0 +1,9 @@
+model_name: google/muril-base-cased
+max_len: 128
+epochs: 4
+batch_size: 16
+lr: 3.0e-5
+seed: 42
+data_path: data/processed/grievances.csv
+output_dir: reports/muril
+class_weighting: true

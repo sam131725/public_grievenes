@@ -1,0 +1,9 @@
+model_name: ai4bharat/IndicBERTv2-MLM-only
+max_len: 128
+epochs: 4
+batch_size: 16
+lr: 3.0e-5
+seed: 42
+data_path: data/processed/grievances.csv
+output_dir: reports/indicbert
+class_weighting: true

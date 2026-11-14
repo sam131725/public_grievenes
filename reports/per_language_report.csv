@@ -1,0 +1,4 @@
+language,n,accuracy,macro_f1
+en,4,1.0,1.0
+hi,3,1.0,1.0
+mr,2,1.0,1.0

@@ -1,0 +1,18 @@
+import re
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+_URL = re.compile(r"https?://\S+")
+_WS = re.compile(r"\s+")
+
+def clean_text(t: str) -> str:
+    t = _URL.sub(" ", str(t))
+    return _WS.sub(" ", t).strip()
+
+def load_and_split(path, seed=42, stratify_col="department"):
+    """CSV columns: text, language, department, urgency, sentiment."""
+    df = pd.read_csv(path).dropna(subset=["text", "department"])
+    df["text"] = df["text"].map(clean_text)
+    train, tmp = train_test_split(df, test_size=0.3, random_state=seed, stratify=df[stratify_col])
+    val, test = train_test_split(tmp, test_size=0.5, random_state=seed, stratify=tmp[stratify_col])
+    return train, val, test
