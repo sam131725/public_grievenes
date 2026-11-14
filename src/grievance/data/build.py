@@ -2,8 +2,9 @@
 
 Processed schema (data/processed/grievances.csv):
     text, language, department, urgency, sentiment, label_source
-`label_source` is "gold" when urgency/sentiment came from the raw file and
-"weak" when they were filled by keyword rules (see urgency_rules.py).
+`label_source` is taken from the raw file when present (e.g. "generated"); otherwise
+"gold" when urgency/sentiment came from the raw file and "weak" when they were filled by
+keyword rules (see urgency_rules.py). Rows whose labels had to be filled are always "weak".
 """
 from __future__ import annotations
 
@@ -144,7 +145,9 @@ def build_dataset(
         df.loc[bad, col] = df.loc[bad, "text"].map(fn)
         gold &= ~bad
         report[f"{col}_weak_labelled"] = int(bad.sum())
-    df["label_source"] = gold.map({True: "gold", False: "weak"})
+    incoming = df["label_source"].astype("object") if "label_source" in df.columns else pd.Series(None, index=df.index, dtype="object")
+    df["label_source"] = incoming.where(incoming.notna() & gold, None)
+    df["label_source"] = df["label_source"].fillna(gold.map({True: "gold", False: "weak"}))
 
     out = df[["text", "language", "department", "urgency", "sentiment", "label_source"]].reset_index(drop=True)
     report["rows_out"] = int(len(out))
