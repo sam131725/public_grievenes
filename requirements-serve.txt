@@ -1,0 +1,8 @@
+# Minimal runtime for serving the TF-IDF baseline (used by the Dockerfile).
+# For the fine-tuned transformer also install: torch, transformers
+fastapi>=0.110
+uvicorn>=0.29
+scikit-learn>=1.4
+pandas>=2.2
+numpy>=1.26
+pyyaml>=6.0
