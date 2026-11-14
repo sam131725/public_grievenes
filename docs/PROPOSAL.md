@@ -1,5 +1,5 @@
 # Project Proposal — Multilingual Public Grievance Classifier and Router
-CS474 Deep Learning · Project P8 · Team: *(fill in names)* · Date: 14 Nov 2026
+CS474 Deep Learning · Project P8 · Team of 11 (names in section 5) · Date: 14 Nov 2026
 
 ## 1. Problem statement
 Municipal bodies and portals such as CPGRAMS receive complaints in many languages and spend effort reading, categorising and
@@ -39,14 +39,14 @@ held-out set is part of the evaluation.
 - **Evaluation:** macro-F1 and accuracy per task and **per language**, department confusion matrix, error analysis of misrouted complaints, and a held-out set of real text kept out of training.
 - **Serving:** FastAPI (`/predict`, `/predict/batch`) and a Streamlit dashboard with a per-language report tab; Docker image for the API.
 
-## 5. Work split (10 members)
+## 5. Work split (11 members)
 | Role | Members | Responsibility |
 |---|---|---|
-| Data (2) | *TBD* | Collect public complaints, labelling guide, cleaning, native-speaker review of generated rows |
-| Modelling (3) | *TBD* | Baselines, MuRIL / IndicBERT / mBERT fine-tuning, multitask heads, imbalance handling |
-| Evaluation (2) | *TBD* | Metrics, per-language report, ablations, error analysis |
-| Deployment (2) | *TBD* | API, dashboard, hosting, demo |
-| Coordination (1) | *TBD* | Repo hygiene, weekly commit check, report and presentation |
+| Data (2) | Sudhanshu Katiyar (230101140), Nishchay Gupta (230101082) | Collect public complaints, labelling guide, cleaning, native-speaker review of generated rows |
+| Modelling (3) | Saumya Rai (230101114), Raj Kesharwani (230101097), Ratnesh Singh (230101099) | Baselines, MuRIL / IndicBERT / mBERT fine-tuning, multitask heads, imbalance handling |
+| Evaluation (2) | Anant Rawat (230101026), Pratik Roy (230101092) | Metrics, per-language report, ablations, error analysis |
+| Deployment (2) | Rahul Kumar (230101096), Md. Zaki (230101156) | API, dashboard, hosting, demo |
+| Coordination (2) | Shashank Shekhar (230101118), Ravindra Kumar (230101102) | Repo hygiene, weekly commit check, report and presentation |
 
 Every member commits weekly; history is graded.
 
