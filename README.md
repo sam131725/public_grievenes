@@ -60,7 +60,6 @@ Shortcuts are in the [Makefile](Makefile) (`make baseline`, `make test`, `make a
 Three sources are used. **Generated complaints** (1,000 rows in English, Hindi and Marathi, built from hand-written templates) are the training and test base, because no public full-text, multilingual, department-labelled grievance corpus exists. **BBMP** (Bengaluru, from GitHub) is a real-text check. **IndicSentiment** (AI4Bharat, from Hugging Face) is downloaded and converted for sentiment but not yet used in training. Details and limits: [docs/DATA.md](docs/DATA.md).
 
 ## Training
-
 ```bash
 python scripts/train_baseline.py                                   # baseline
 python scripts/train_transformer.py --config configs/muril.yaml    # MuRIL
@@ -170,3 +169,16 @@ Roles and weekly ownership are in [docs/WORKPLAN.md](docs/WORKPLAN.md); mileston
 - Kakwani et al., *IndicNLPSuite: Monolingual Corpora, Evaluation Benchmarks and Pre-trained Multilingual Language Models for Indian Languages*, Findings of EMNLP 2020 (IndicBERT).
 - Devlin et al., *BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding*, 2019 (multilingual BERT).
 - Datasets: CPGRAMS-style public grievance samples, scraped municipal complaints, IndicNLP corpora — see [docs/DATA.md](docs/DATA.md).
+
+## Future Enhancements
+
+To improve the practical usability and reliability of the system, the following enhancements can be explored:
+
+- **Explainable AI (XAI):** Provide insights into the keywords and factors influencing department, urgency, and sentiment predictions.
+- **Grievance Tracking:** Introduce unique complaint IDs to help citizens track complaint status and resolution progress.
+- **Voice-Based Complaints:** Enable citizens to submit complaints through speech-to-text conversion in supported Indian languages.
+- **Geographic Analytics:** Visualize department-wise complaints across different districts and identify frequently affected areas.
+- **Human-in-the-Loop Validation:** Allow authorized officials to review and correct incorrect predictions, particularly for critical complaints.
+- **Automated Notifications:** Provide status updates and alerts to citizens and responsible authorities.
+
+These enhancements aim to make the platform more transparent, accessible, and effective for real-world public grievance management.
